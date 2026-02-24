@@ -1,0 +1,30 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Instructor Login{% endblock %}
+{% block og_description %}Login to access your assignments and manage your courses{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-login-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-box">
+        <h2>Instructor Login</h2>
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+        <form class="login-form" method="POST" action="{{ url_for('instructor_login_post') }}">
+            <div class="form-group">
+                <label for="instructor_id">Instructor ID</label>
+                <input type="text" id="instructor_id" name="instructor_id" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="instructor_password">Password</label>
+                <input type="password" id="instructor_password" name="instructor_password" required>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

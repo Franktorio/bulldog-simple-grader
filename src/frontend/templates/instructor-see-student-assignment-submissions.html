@@ -1,0 +1,81 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - {{ user_data.student.name }} - {{ user_data.assignment.title }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-see-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ user_data.student.name }}: {{ user_data.assignment.title }}</h1>
+    <h2>Student ID: {{ user_data.student.id }}</h2>
+</div>
+
+<div class="page-actions">
+    <a href="/instructors/students/{{ user_data.student.id }}" class="action-btn secondary">Back to Student</a>
+    <a href="/instructors/assignments/{{ user_data.assignment.id }}" class="action-btn secondary">View Assignment</a>
+    <a href="/instructors/students/{{ user_data.student.id }}/submissions" class="action-btn secondary">All Student Submissions</a>
+</div>
+
+<div class="detail-section">
+    <h2>{{ user_data.student.name }}'s submissions for {{ user_data.assignment.title }} ({{ user_data.submissions | length }})</h2>
+    {% if user_data.submissions %}
+        {% for submission in user_data.submissions %}
+        <div class="submission-card">
+            <h3>Submission #{{ submission.id }}</h3>
+            <div class="sub-meta">
+                <strong>Problem:</strong> <span style="font-family: 'JetBrains Mono', monospace;">{{ submission.slug }}</span>
+                &nbsp;|&nbsp;
+                <strong>Submitted:</strong> {{ submission.submission_timestamp }}
+            </div>
+            {% if submission.grader_output is mapping %}
+                <div>
+                    <strong>Result:</strong>
+                    {% if submission.grader_output.all_passed %}
+                        <span class="badge-completed">All tests passed ({{ submission.grader_output.passed }}/{{ submission.grader_output.total }})</span>
+                    {% else %}
+                        <span style="color: red;">{{ submission.grader_output.passed }}/{{ submission.grader_output.total }} tests passed</span>
+                    {% endif %}
+                </div>
+                <div class="hidden" id="sub-detail-{{ submission.id }}">
+                    <pre style="margin-top: 10px; background: var(--background); border: 1px solid var(--border); border-radius: 6px; padding: 12px; white-space: pre-wrap; font-size: 0.88rem;">{{ submission.grader_output.program_output }}</pre>
+                    <ul>
+                    {% for test, result in submission.grader_output.tests.items() %}
+                        <li style="margin-bottom: 6px;">
+                            <strong>{{ test }}:</strong>
+                            {% if result.passed %}
+                                <span class="badge-completed">Passed</span>
+                            {% else %}
+                                <span style="color: red;">Failed</span>
+                                {% if result.message %} &mdash; {{ result.message }}{% endif %}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    <strong>Submitted Code:</strong>
+                    <pre class="code-preview"><code>{% if submission.submitted_code %}{{ submission.submitted_code }}{% else %}No program code available.{% endif %}</code></pre>
+                </div>
+                <button class="toggle-output" type="button"
+                    onclick="
+                        const d = document.getElementById('sub-detail-{{ submission.id }}');
+                        if (d.classList.contains('hidden')) {
+                            d.classList.remove('hidden');
+                            this.innerText = 'Hide Details';
+                        } else {
+                            d.classList.add('hidden');
+                            this.innerText = 'Show Details';
+                        }
+                    ">Show Details</button>
+            {% elif submission.grader_output %}
+                <pre style="background: var(--background); border: 1px solid var(--border); border-radius: 6px; padding: 12px; white-space: pre-wrap; font-size: 0.88rem;">{{ submission.grader_output }}</pre>
+            {% else %}
+                <p style="color: var(--text-contrast-two);">No grader output available.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-contrast-two);">No submissions for this assignment yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+# API modules
+fastapi
+uvicorn
+jinja2
+python-multipart
+
+# Security
+bcrypt
+
+# Environment variables
+python-dotenv

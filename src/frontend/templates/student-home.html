@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Home{% endblock %}
+{% block og_description %}Welcome to Bulldog Simple Grader.{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/student-home-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="welcome-sign">
+    <h1>Welcome, {{ user_data.name }}!</h1>
+</div>
+{% if user_data.assignments %}
+    <h2>Your Assignments</h2>
+    {% for assignment_id, assignment in user_data.assignments.items() %}
+        <a href="/students/assignments/{{ assignment_id }}" class="assignment-card">
+            <h3>{{ assignment.title }}</h3>
+            <p>Due: {{ assignment.due_date_timestamp }}</p>
+            {% if assignment.is_active %}
+                {% if assignment.is_completed %}
+                    <p style="color: rgb(17, 180, 17);"><b>Completed, good job!</b></p>
+                {% else %}
+                    <p><b>Requirements:</b> {{ assignment.requirements }}</p>
+                    <p style="color: red;"><b>{{ assignment.progress }}</b></p>
+                {% endif %}
+            {% else %}
+                <p>Status: Not Active</p>
+            {% endif %}
+        </a>
+    {% endfor %}
+{% endif %}
+{% endblock %}

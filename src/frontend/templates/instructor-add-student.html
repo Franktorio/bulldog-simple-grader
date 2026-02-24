@@ -1,0 +1,31 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Add Student{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-see-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Add New Student</h2>
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+    <form method="POST" action="{{ url_for('instructor_add_student_post') }}">
+        <div class="form-group">
+            <label for="student_id">Student ID</label>
+            <input type="number" id="student_id" name="student_id" required autofocus placeholder="e.g. 12345">
+        </div>
+        <div class="form-group">
+            <label for="student_name">Full Name</label>
+            <input type="text" id="student_name" name="student_name" required placeholder="e.g. Jane Smith">
+        </div>
+        <div class="form-group">
+            <label for="password">Initial Password</label>
+            <input type="password" id="password" name="password" required placeholder="Set an initial password">
+        </div>
+        <button type="submit" class="submit-btn">Add Student</button>
+    </form>
+</div>
+{% endblock %}

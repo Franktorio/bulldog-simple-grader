@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - {{user_data.slug_name}} Upload{% endblock %}
+{% block og_description %}Submit your work for {{user_data.slug_name}}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/student-submit-style.css') }}">
+{% endblock %}
+
+{% block content %}
+{% if user_data.completed %}
+    <div class="submit-container">
+        <h1>You have already completed {{user_data.slug_name}}</h1>
+    </div>
+{% else %}
+    <div class="submit-container">
+        <h1>Submit your work for {{user_data.slug_name}}</h1>
+        <form method="POST" action="{{ url_for('student_submit_problem_post', assignment_id=user_data.assignment_id, slug_name=user_data.slug_name) }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="submission_file">Select your submission file:</label>
+                <input type="file" id="submission_file" name="submission_file" required>
+            </div>
+            <button type="submit" class="submit-button" onclick="
+                if (document.getElementById('submission_file').files.length === 0) { 
+                    alert('Please select a file to submit.');
+                    return false; 
+                } 
+                this.disabled = true; 
+                this.innerText = 'Submitting...';
+                this.form.submit();
+                ">Submit</button>
+        </form>
+    </div>
+{% endif %}
+<div class="submissions-container">
+    <h2>Your Previous Submissions for {{user_data.slug_name}}</h2>
+    {% if user_data.submissions %}
+        {% for submission in user_data.submissions %}
+            <div>
+                <h3 class="submission-separator">Submission ID: {{ submission.id }}</h3>
+                <p>Submitted at: {{ submission.submission_timestamp }}</p>
+                <div class="submission-result">
+                    <h4>Grader Output:</h4>
+                    {% if submission.grader_output is mapping %}
+                        <ul>
+                            <li><strong>Assignment:</strong> {{ submission.grader_output.assignment }}</li>
+                            <li><strong>Passed:</strong> {{ submission.grader_output.passed }} / {{ submission.grader_output.total }}</li>
+                            {% if submission.grader_output.all_passed %}
+                                <li style="color:green;"><b>All tests passed!</b></li>
+                            {% else %}
+                                <li style="color:red;"><b>Some tests failed.</b></li>
+                            {% endif %}
+                        </ul>
+                        <div class="hidden", id="info-div{{ submission.id }}">
+                            <pre>{{ submission.grader_output.program_output }}</pre>
+                            <h5>Test Results:</h5>
+                            <ul>
+                            {% for test, result in submission.grader_output.tests.items() %}
+                                <li>
+                                    <h3 class="test-separator">{{ test }}:</h3>
+                                    {% if result.passed %}
+                                        <span style="color:green;"><b>Passed</b></span>
+                                    {% else %}
+                                        <span style="color:red;"><b>Failed</b></span>
+                                        {% if result.message %}<br>Message: <pre style="white-space: pre-wrap;">{{ result.message }}</pre>{% endif %}
+                                        {% if result.hint %}<br>Hint: <pre style="white-space: pre-wrap;">{{ result.hint }}</pre>{% endif %}
+                                        {% if result.instructions %}<br>Instructions: <pre style="white-space: pre-wrap;">{{ result.instructions }}</pre>{% endif %}
+                                        {% if result.expected_output %}<br>Expected: <pre style="white-space: pre-wrap;">{{ result.expected_output }}</pre>{% endif %}
+                                        {% if result.actual_output %}<br>Actual: <pre style="white-space: pre-wrap;">{{ result.actual_output }}</pre>{% endif %}
+                                        {% if result.traceback %}<br>Traceback: <pre style="white-space: pre-wrap;">{{ result.traceback }}</pre>{% endif %}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                        <button
+                            class="toggle-output"
+                            type="button"
+                            onclick="
+                                const infoDiv = document.getElementById('info-div{{ submission.id }}');
+                                if (infoDiv.classList.contains('hidden')) {
+                                    infoDiv.classList.remove('hidden');
+                                    this.innerText = 'Hide Details';
+                                } else {
+                                    infoDiv.classList.add('hidden');
+                                    this.innerText = 'Show Details';
+                                }
+                            "
+                        >Show Details</button>
+                    {% elif submission.grader_output %}
+                        <pre>{{ submission.grader_output }}</pre>
+                    {% else %}
+                        <pre>No grader output available.</pre>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have not made any submissions for this problem yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Add Assignment{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-see-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Add New Assignment</h2>
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+    <form method="POST" action="{{ url_for('instructor_add_assignment_post') }}">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required autofocus placeholder="e.g. Python Basics">
+        </div>
+        <div class="form-group">
+            <label for="directory_name">Directory Name</label>
+            <input type="text" id="directory_name" name="directory_name" required placeholder="e.g. python_basics">
+            <small>Folder name under evaluations/ that holds this assignment's checks.</small>
+        </div>
+        <div class="form-group">
+            <label for="slugs">Problems (comma-separated)</label>
+            <input type="text" id="slugs" name="slugs" required placeholder="e.g. hello_world, variables, loops">
+            <small>Enter the slug names for each problem, separated by commas.</small>
+        </div>
+        <div class="form-group">
+            <label for="min_completed">Minimum to Complete</label>
+            <input type="number" id="min_completed" name="min_completed" required min="1" placeholder="e.g. 3">
+            <small>Number of problems a student must pass to complete this assignment.</small>
+        </div>
+        <div class="form-group">
+            <label for="due_date">Due Date (optional)</label>
+            <input type="datetime-local" id="due_date" name="due_date">
+        </div>
+        <div class="form-group">
+            <div class="checkbox-row">
+                <input type="checkbox" id="is_active" name="is_active" checked>
+                <label for="is_active" style="margin-bottom: 0;">Active (visible to students)</label>
+            </div>
+        </div>
+        <button type="submit" class="submit-btn">Create Assignment</button>
+    </form>
+</div>
+{% endblock %}

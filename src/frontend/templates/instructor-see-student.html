@@ -1,0 +1,70 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Student {{ user_data.student.name }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-see-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ user_data.student.name }}</h1>
+    <h2>Student ID: {{ user_data.student.id }}</h2>
+</div>
+
+<div class="page-actions">
+    <a href="/instructors/students/{{ user_data.student.id }}/submissions" class="action-btn secondary">View All Submissions</a>
+    <a href="/instructors/home" class="action-btn secondary">Back to Home</a>
+</div>
+
+<div class="detail-section">
+    <h2>Assignment Progress</h2>
+    {% if user_data.assignments %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Assignment</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Completed Problems</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in user_data.assignments %}
+                <tr>
+                    <td>
+                        <a href="/instructors/assignments/{{ assignment.id }}">{{ assignment.title }}</a>
+                        {% if not assignment.is_active %}
+                            <span class="badge-inactive" style="font-size: 0.8rem; margin-left: 6px;">(Inactive)</span>
+                        {% endif %}
+                        <a href="/instructors/students/{{ user_data.student.id }}/assignments/{{ assignment.id }}/submissions" class="action-btn secondary" style="font-size: 0.8rem; padding: 2px 8px; margin-left: 8px;">View Submissions</a>
+                    </td>
+                    <td>{{ assignment.due_date_timestamp if assignment.due_date_timestamp else 'No due date' }}</td>
+                    <td>
+                        {% if assignment.is_completed %}
+                            <span class="badge-completed">Completed</span>
+                        {% else %}
+                            <span class="badge-not-completed">In Progress</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ assignment.completed_count }} / {{ assignment.min_completed }} required</td>
+                    <td>
+                        <div class="slug-chips">
+                            {% for slug_name in assignment.slugs_completed %}
+                                <span class="slug-chip completed">{{ slug_name }}</span>
+                            {% endfor %}
+                            {% if not assignment.slugs_completed %}
+                                <span style="color: var(--text-contrast-two); font-size: 0.88rem;">None yet</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: var(--text-contrast-two);">No assignments available.</p>
+    {% endif %}
+</div>
+{% endblock %}

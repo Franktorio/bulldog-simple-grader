@@ -1,0 +1,159 @@
+/* Titlebar and Navigation Styles */
+.titlebar {
+    background-color: var(--dark-background);
+    color: var(--text);
+    padding: 10px 10px;
+    padding-left: 0px;
+    height: 50px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border);
+}
+
+.titlebar img {
+    height: 30px;
+    width: 30px;
+}
+
+.titlebar a {
+    color: var(--text);
+    background-color: var(--dark-background);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    padding: 8px 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 5px 5px;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.titlebar a:hover {
+    background-color: var(--background);
+    border-color: var(--hover);
+    color: var(--accent);
+}
+
+.titlebar a.active {
+    background-color: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+.titlebar a.active:hover {
+    background-color: var(--hover);
+    border-color: var(--hover);
+    color: var(--accent);
+}
+
+.titlebar a.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.titlebar a.logo {
+    padding: 0;
+    background-color: transparent;
+    border-color: transparent;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+.titlebar a.logo:hover {
+    background-color: transparent;
+    color: var(--accent);
+}
+
+
+.titlebar h1.logo {
+    margin: 0;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    transition: color 0.2s;
+}
+.titlebar h1.logo:hover {
+    color: var(--accent);
+}
+
+.titlebar button {
+    color: var(--text);
+    background-color: var(--dark-background);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 8px 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin: 5px 5px;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.titlebar button:hover {
+    background-color: var(--background);
+    border-color: var(--hover);
+    color: var(--accent);
+    cursor: pointer;
+}
+
+
+.nav-left,
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 30px;
+    flex-wrap: nowrap;
+}
+
+.nav-left {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 1000px) {
+    .titlebar {
+        position: static;
+        top: auto;
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+        gap: 10px;
+    }
+    .titlebar a {
+        padding: 6px 12px;
+    }
+    .titlebar button {
+        padding: 6px 12px;
+    }
+
+    .titlebar a.logo {
+        flex-direction: column;
+        height: auto;
+    }
+    .titlebar h1.logo {
+        font-size: 1.5rem;
+    }
+
+    .nav-left {
+        flex-direction: column;
+        margin: 0;
+        gap: 5px;
+    }
+
+    body {
+        padding-top: 0;
+    }
+}

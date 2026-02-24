@@ -1,0 +1,116 @@
+
+
+.dashboard-flex {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.student-list, .assignment-list {
+    background: var(--light-background);
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(44, 62, 80, 0.10);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    min-width: 320px;
+    max-width: 60%;
+}
+@media (max-width: 900px) {
+    .dashboard-flex {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    .student-list, .assignment-list {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+.student-list h2, .assignment-list h2 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 1.2rem;
+}
+
+.welcome-sign {
+    background: var(--primary);
+    color: var(--text-contrast);
+    padding: 2rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+}
+
+
+.student-card {
+    display: block;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    padding: 0.85rem 1.2rem;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(44, 62, 80, 0.06);
+    transition: box-shadow 0.2s, border-color 0.2s, color 0.2s;
+    font-size: 1.05rem;
+}
+
+.student-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.12);
+    color: var(--accent);
+}
+
+.assignment-card {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 1.2rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 1px 4px rgba(44, 62, 80, 0.06);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, border-color 0.2s, color 0.2s;
+    text-decoration: none;
+}
+.assignment-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.12);
+    color: var(--accent);
+}
+
+.assignment-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+}
+
+.assignment-meta {
+    font-size: 0.97rem;
+    color: var(--text-contrast-two);
+    margin-top: 0.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.assignment-active {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.assignment-active {
+    color: var(--accent);
+    font-weight: 600;
+}
+.assignment-inactive {
+    color: var(--border);
+    font-weight: 600;
+}

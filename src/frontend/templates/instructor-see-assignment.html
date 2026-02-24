@@ -1,0 +1,88 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - {{ user_data.assignment.title }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-see-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ user_data.assignment.title }}</h1>
+    <div class="header-meta">
+        <span>Due: {{ user_data.assignment.due_date_timestamp if user_data.assignment.due_date_timestamp else 'No due date' }}</span>
+        <span>Min to complete: {{ user_data.assignment.min_completed }}</span>
+        <span>
+            {% if user_data.assignment.is_active %}
+                <span class="badge-active">Active</span>
+            {% else %}
+                <span class="badge-inactive">Inactive</span>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+<div class="page-actions">
+    <a href="/instructors/assignments/{{ user_data.assignment.id }}/submissions" class="action-btn secondary">View All Submissions</a>
+    <a href="/instructors/assignments/{{ user_data.assignment.id }}/completions" class="action-btn secondary">View Completions</a>
+    <form method="POST" action="/instructors/assignments/{{ user_data.assignment.id }}/toggle-active" style="display: inline;">
+        <button type="submit" class="action-btn secondary">Toggle Active</button>
+    </form>
+    <a href="/instructors/home" class="action-btn secondary">Back to Home</a>
+</div>
+
+<div class="detail-section">
+    <h2>Problems (Slugs)</h2>
+    {% if user_data.slugs_available %}
+        <div class="slug-chips">
+            {% for slug in user_data.slugs_available %}
+                <span class="slug-chip">{{ slug.name }}</span>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-contrast-two);">No problems registered for this assignment yet.</p>
+    {% endif %}
+</div>
+
+<div class="detail-section">
+    <h2>Student Progress</h2>
+    {% if user_data.students %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>ID</th>
+                    <th>Problems Completed</th>
+                    <th>Status</th>
+                    <th>Completed Problems</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in user_data.students %}
+                <tr>
+                    <td><a href="/instructors/students/{{ student.id }}">{{ student.name }}</a></td>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.completed_count }} / {{ user_data.assignment.min_completed }}</td>
+                    <td>
+                        {% if student.is_completed %}
+                            <span class="badge-completed">Completed</span>
+                        {% else %}
+                            <span class="badge-not-completed">In Progress</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="slug-chips">
+                            {% for slug_name in student.slugs_completed %}
+                                <span class="slug-chip completed">{{ slug_name }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: var(--text-contrast-two);">No students enrolled.</p>
+    {% endif %}
+</div>
+{% endblock %}

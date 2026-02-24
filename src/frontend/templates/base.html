@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Bulldog Simple Grader">
+    <title>{% block page_title %}Bulldog Simple Grader{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/titlebar-style.css') }}">
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <!--Navigation bar-->
+    <div class="titlebar">
+        <div class="nav-left">
+            <a href="{{ url_for('student_home') }}" class="logo">
+                <h1 class="logo">Bulldog Simple Grader</h1>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="https://github.com/Franktorio/bulldog-simple-grader" target="_blank" rel="noopener noreferrer">Github</a>
+            {% if user_data.authenticated %}
+                <form method="POST" action="{{ url_for('logout_post') }}">
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('student_login') }}">Student Login</a>
+                <a href="{{ url_for('instructor_login') }}">Instructor Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="content">{% block content %}{% endblock %}</div>
+    <div class="footer">
+        <p>&copy; 2026 Bulldog Simple Grader. All rights reserved.</p>
+    </div>
+</body>
+</html>

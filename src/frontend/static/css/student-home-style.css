@@ -1,0 +1,58 @@
+
+.welcome-sign {
+    color: var(--text);
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+.welcome-sign h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    margin-bottom: 12px;
+}
+.welcome-sign h2 {
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: var(--text);
+    opacity: 0.9;
+}
+
+.assignment-card {
+    background-color: var(--dark-background) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    margin: 10px auto !important;
+    width: 100% !important;
+    max-width: 600px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    transition: box-shadow 0.2s, background-color 0.2s, transform 0.2s, border-color 0.2s !important;
+    text-decoration: none !important;
+    color: var(--text) !important;
+    display: block !important;
+}
+.assignment-card h3 {
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+}
+.assignment-card p {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+.assignment-card:hover {
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+    background-color: var(--background) !important;
+    transform: translate(0, -2px) !important;
+    border-color: var(--accent) !important;
+}
+

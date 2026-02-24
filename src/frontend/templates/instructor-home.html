@@ -1,0 +1,60 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Home{% endblock %}
+{% block og_description %}Welcome to Bulldog Simple Grader.{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-home-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="welcome-sign">
+    <h1>Welcome, {{ user_data.name }}!</h1>
+</div>
+
+<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center;">
+    <a href="{{ url_for('instructor_add_assignment') }}" style="background: var(--accent); color: var(--text-contrast); border-radius: 6px; padding: 0.55rem 1.2rem; text-decoration: none; font-weight: 600; font-size: 0.97rem;">+ Add Assignment</a>
+    <a href="{{ url_for('instructor_add_student') }}" style="background: var(--light-background); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.55rem 1.2rem; text-decoration: none; font-weight: 600; font-size: 0.97rem;">+ Add Student</a>
+</div>
+
+<div class="dashboard-flex">
+    <section class="student-list">
+        {% if user_data.students %}
+            <h2>Students</h2>
+            <div>
+            {% for student in user_data.students %}
+                <a href="/instructors/students/{{ student.id }}" class="student-card">
+                    {{ student.name }}
+                </a>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p>No students found.</p>
+        {% endif %}
+    </section>
+
+    <section class="assignment-list">
+        {% if user_data.assignments %}
+            <h2>Assignments</h2>
+            {% for assignment in user_data.assignments %}
+                <a href="/instructors/assignments/{{ assignment.id }}" class="assignment-card">
+                    <div class="assignment-title">{{ assignment.title }}</div>
+                    <div class="assignment-meta">
+                        <span>Due: {{ assignment.due_date_timestamp if assignment.due_date_timestamp else 'No due date' }}</span> |
+                        <span>Min Completed: {{ assignment.min_completed }}</span>
+                    </div>
+                    <div class="assignment-status">
+                        {% if assignment.is_active %}
+                            <span class="assignment-active">Active</span>
+                        {% else %}
+                            <span class="assignment-inactive">Inactive</span>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>No assignments found.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

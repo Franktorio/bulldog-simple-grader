@@ -1,0 +1,128 @@
+.submit-container {
+	background: var(--primary);
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 2rem 2.5rem;
+	margin: 2rem auto 1.5rem auto;
+	width: 100%;
+	max-width: 70%;
+	text-align: center;
+	color: var(--text);
+	border-bottom: 3px solid var(--accent);
+}
+
+.submit-container h1 {
+	margin-top: 0;
+	color: var(--text-contrast);
+	border-bottom: 1px solid var(--text-contrast);
+}
+
+.form-group {
+	margin-bottom: 1.5rem;
+	text-align: left;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+}
+
+.form-group input[type="file"] {
+	width: 100%;
+	padding: 0.5rem;
+	border: 1px solid var(--border);
+	border-radius: 5px;
+	background: var(--dark-background);
+	color: var(--text);
+}
+
+.submit-button {
+	background: var(--accent);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	padding: 0.7rem 2.2rem;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+	margin-top: 0.5rem;
+}
+.submit-button:hover {
+	background: var(--accent-hover);
+}
+
+.submissions-container {
+	background: var(--primary);
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+	padding: 2rem 2.5rem;
+	margin: 1.5rem auto 2rem auto;
+	width: 100%;
+	max-width: 70%;
+	color: var(--text);
+}
+
+.submissions-container h2 {
+	margin-top: 0;
+	color: var(--text-contrast-two);
+}
+
+.submission-result {
+	background: var(--dark-background);
+	border-radius: 7px;
+	padding: 1rem 1.2rem;
+	margin: 1.2rem 0 2rem 0;
+	border-left: 4px solid var(--accent);
+	font-size: 0.98rem;
+	word-break: break-word;
+	color: var(--text);
+}
+
+.submission-result pre {
+	background: var(--background);
+	border-radius: 5px;
+	padding: 0.7rem 1rem;
+	overflow-x: auto;
+	font-size: 0.97rem;
+	margin: 0.5rem 0 0 0;
+	color: var(--text);
+}
+
+.submission-separator {
+    margin: 2rem 0 1rem 0;
+    color: var(--text-contrast);
+    width: 100%;
+    border-bottom: 1px solid var(--text-contrast);
+    padding-bottom: 0.3rem;
+    font-size: 1.5rem;
+}
+
+.test-separator {
+    margin: 1.5rem 0 0.8rem 0;
+    color: var(--accent);
+    width: 100%;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 0.3rem;
+}
+
+.toggle-output {
+	background: var(--accent);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	padding: 0.5rem 1.5rem;
+	font-size: 0.95rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+	margin-top: 0.8rem;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.toggle-output:hover {
+	background: var(--accent-hover);
+	transform: translateY(-2px);
+	box-shadow: 0 1px 2px var(--accent-hover);
+}

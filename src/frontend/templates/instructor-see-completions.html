@@ -1,0 +1,73 @@
+{% extends "instructor-base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Completions for {{ user_data.assignment.title }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/instructor-see-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Completions: {{ user_data.assignment.title }}</h1>
+    <h2>Min required: {{ user_data.assignment.min_completed }} problems</h2>
+</div>
+
+<div class="page-actions">
+    <a href="/instructors/assignments/{{ user_data.assignment.id }}" class="action-btn secondary">Back to Assignment</a>
+    <a href="/instructors/assignments/{{ user_data.assignment.id }}/submissions" class="action-btn secondary">View All Submissions</a>
+</div>
+
+<div class="detail-section">
+    <h2>Completed ({{ user_data.completions | length }})</h2>
+    {% if user_data.completions %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Problems Completed</th>
+                    <th>Completed At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for completion in user_data.completions %}
+                <tr>
+                    <td><a href="/instructors/students/{{ completion.student_id }}">{{ completion.student_name }}</a></td>
+                    <td>
+                        <div class="slug-chips">
+                            {% for slug_name in completion.slugs_completed %}
+                                <span class="slug-chip completed">{{ slug_name }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>{{ completion.completion_timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: var(--text-contrast-two);">No students have completed this assignment yet.</p>
+    {% endif %}
+</div>
+
+{% if user_data.not_completed %}
+<div class="detail-section">
+    <h2>Not Yet Completed ({{ user_data.not_completed | length }})</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in user_data.not_completed %}
+            <tr>
+                <td><a href="/instructors/students/{{ student.id }}">{{ student.name }}</a></td>
+                <td>{{ student.id }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

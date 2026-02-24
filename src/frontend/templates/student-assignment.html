@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block page_title %}Bulldog Simple Grader - Assignment {{ user_data.assignment.title }}{% endblock %}
+{% block og_description %}Welcome to Bulldog Simple Grader.{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/student-assignment-style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="assignment-header">
+    <h1>{{ user_data.assignment.title }} (id={{ user_data.assignment.id }})</h1>
+    <h2>{{ user_data.assignment.due_date_timestamp }}</h2>
+</div>
+<div class="assignment-details">
+    <h2>Assignment Details</h2>
+    <div class="problems-container">
+        <p>You can complete all available problems, but you really only need to do the minimum amount to pass.</p>
+        <p>Completing additional problems will not affect your grade, but it can help you practice and improve your skills.</p>
+        <div class="problems-list">
+            {% for slug in user_data.slugs_available %}
+                <a href="/students/assignments/{{ user_data.assignment.id }}/{{ slug.name }}" class="problem-card">
+                    <h3>{{ slug.name }}</h3>
+                    {% if slug.name in user_data.slugs_completed %}
+                        <p style="color: rgb(17, 180, 17);"><b>Completed, good job!</b></p>
+                    {% else %}
+                        <p style="color: orange;"><b>Not Completed</b></p>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% if user_data.is_completed %}
+        <p><b>Completed, good job!</b></p>
+    {% else %}
+        <p><b>Requirements:</b> {{ user_data.requirements }}</p>
+        <p><b>Progress:</b> {{ user_data.progress }}</p>
+    {% endif %}
+</div>
+{% endblock %}
