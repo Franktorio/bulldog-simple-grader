@@ -20,7 +20,7 @@
         <div class="nav-right">
             <a href="https://github.com/Franktorio/bulldog-simple-grader" target="_blank" rel="noopener noreferrer">Github</a>
             {% if user_data.authenticated %}
-                <form method="POST" action="{{ url_for('logout_post') }}">
+                <form method="POST" action="{{ url_for('instructor_logout_post') }}">
                     <button type="submit">Logout</button>
                 </form>
             {% else %}
