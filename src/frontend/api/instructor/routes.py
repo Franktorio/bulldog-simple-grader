@@ -4,6 +4,7 @@
 import datetime
 from fastapi import APIRouter, HTTPException, Cookie, Request, Form, Depends, UploadFile
 from src.db.grader_db import login_tokens, instructors, helpers, add_assignment, add_student, get_assignment, modify_assignment
+from src.db.grader_db.login_tokens import delete_login_token
 from fastapi.responses import RedirectResponse
 from src.frontend.api.paths import templates
 from .authentication import authenticate_instructor
@@ -13,6 +14,7 @@ from .constants import (
     COOKIE_MAX_AGE,
     PRINT_PREFIX,
     INSTRUCTOR_LOGIN_TEMPLATE,
+    INSTRUCTOR_LOGIN_URL,
     INSTRUCTOR_HOME_URL,
     INSTRUCTOR_HOME_TEMPLATE,
     INSTRUCTOR_ADD_ASSIGNMENT_TEMPLATE,
@@ -108,6 +110,23 @@ def instructor_login_post(request: Request, instructor_id: str = Form(...), inst
                 "user_data": {"authenticated": False}
             }
         )
+
+
+@router.post("/logout", name="instructor_logout_post")
+def instructor_logout_post(instructor_login_token: str = Cookie(None)):
+    """Handle instructor logout by removing token from database and clearing cookie."""
+    if instructor_login_token:
+        success = delete_login_token(instructor_login_token)
+        if success:
+            print(f"[INFO] [{PRINT_PREFIX}] Successfully logged out instructor with token: {instructor_login_token[-5:]}")
+        else:
+            print(f"[WARNING] [{PRINT_PREFIX}] Failed to delete login token during logout: {instructor_login_token[-5:]}")
+    else:
+        print(f"[INFO] [{PRINT_PREFIX}] No login token found in cookies during logout attempt.")
+    
+    response = RedirectResponse(url=INSTRUCTOR_LOGIN_URL, status_code=303)
+    response.delete_cookie(key=COOKIE_KEY)
+    return response
 
 
 # === ASSIGNMENT ROUTES ===
