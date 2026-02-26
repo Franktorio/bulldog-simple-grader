@@ -25,6 +25,7 @@ INSTRUCTOR_SEE_STUDENT_ASSIGNMENT_SUBMISSIONS_TEMPLATE = "instructor-see-student
 
 # Redirect URLs
 INSTRUCTOR_LOGIN_URL = "/instructors/login"
+INSTRUCTOR_LOGOUT_URL = "/instructors/logout"
 INSTRUCTOR_HOME_URL = "/instructors/home"
 INSTRUCTOR_ADD_ASSIGNMENT_URL = "/instructors/add-assignment"
 INSTRUCTOR_ADD_STUDENT_URL = "/instructors/add-student"
