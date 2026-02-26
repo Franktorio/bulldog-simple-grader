@@ -8,12 +8,13 @@ from fastapi import Cookie, FastAPI, Request, HTTPException
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from config.config import API_ENABLED, API_PORT
 from src.db.grader_db import login_tokens
 from .paths import STATIC_DIR
 from .student import router as student_router
 from .student.constants import STUDENT_LOGIN_URL, COOKIE_KEY
-from .instructor.constants import INSTRUCTOR_HOME_URL, INSTRUCTOR_LOGIN_URL
+from .instructor.constants import INSTRUCTOR_LOGIN_URL, COOKIE_KEY as INSTRUCTOR_COOKIE_KEY
 from .instructor import router as instructor_router
 
 PRINT_PREFIX = "API"
@@ -21,12 +22,19 @@ PRINT_PREFIX = "API"
 app = FastAPI()
 
 
+@app.exception_handler(StarletteHTTPException)
+async def custom_404_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 404:
+        return RedirectResponse(url=STUDENT_LOGIN_URL, status_code=303)
+    raise exc
+
+
 @app.exception_handler(HTTPException)
 async def auth_exception_handler(request: Request, exc: HTTPException):
     """Handle 401 authentication exceptions by redirecting to login."""
     if exc.status_code == 400:
         response = RedirectResponse(url=INSTRUCTOR_LOGIN_URL, status_code=303)
-        response.delete_cookie(key=COOKIE_KEY)
+        response.delete_cookie(key=INSTRUCTOR_COOKIE_KEY)
         return response
     if exc.status_code == 401:
         response = RedirectResponse(url=STUDENT_LOGIN_URL, status_code=303)
