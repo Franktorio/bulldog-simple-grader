@@ -13,7 +13,7 @@ from src.db.grader_db import login_tokens
 from .paths import STATIC_DIR
 from .student import router as student_router
 from .student.constants import STUDENT_LOGIN_URL, COOKIE_KEY
-from .instructor.constants import INSTRUCTOR_HOME_URL, INSTRUCTOR_LOGIN_TEMPLATE
+from .instructor.constants import INSTRUCTOR_HOME_URL, INSTRUCTOR_LOGIN_URL
 from .instructor import router as instructor_router
 
 PRINT_PREFIX = "API"
@@ -25,7 +25,7 @@ app = FastAPI()
 async def auth_exception_handler(request: Request, exc: HTTPException):
     """Handle 401 authentication exceptions by redirecting to login."""
     if exc.status_code == 400:
-        response = RedirectResponse(url=INSTRUCTOR_LOGIN_TEMPLATE, status_code=303)
+        response = RedirectResponse(url=INSTRUCTOR_LOGIN_URL, status_code=303)
         response.delete_cookie(key=COOKIE_KEY)
         return response
     if exc.status_code == 401:
@@ -50,10 +50,11 @@ def start_api_server():
         print(f"[INFO] [{PRINT_PREFIX}] API server is disabled in configuration. Not starting.")
         return
     print(f"[INFO] [{PRINT_PREFIX}] Starting API server on port {API_PORT}...")
-    def _run_uvicorn():
-        uvicorn.run(app, host="0.0.0.0", port=API_PORT)
-    api_thread = threading.Thread(target=_run_uvicorn, daemon=True, name="APIServerThread")
-    api_thread.start()
+    uvicorn.run(app, host="0.0.0.0", port=API_PORT)
+    # def _run_uvicorn():
+    #     uvicorn.run(app, host="0.0.0.0", port=API_PORT)
+    # api_thread = threading.Thread(target=_run_uvicorn, daemon=True, name="APIServerThread")
+    # api_thread.start()
 
 @app.post("/logout", name="logout_post")
 def student_logout_post(token: str = Cookie(None)):

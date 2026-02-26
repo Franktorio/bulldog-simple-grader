@@ -108,9 +108,3 @@ if __name__ == "__main__":
 
     # Start API server
     start_api_server()
-    print(f"[INFO] [{PRINT_PREFIX}] API server started successfully.")
-
-
-    # Start main loop
-    print(f"[INFO] [{PRINT_PREFIX}] Entering main loop. Type 'exit' to quit.")
-    main_loop()
