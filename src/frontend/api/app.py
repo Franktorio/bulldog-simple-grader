@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from config.config import API_ENABLED, API_PORT
 from src.db.grader_db import login_tokens
-from .paths import STATIC_DIR
+from .paths import STATIC_DIR, templates
 from .student import router as student_router
 from .student.constants import STUDENT_LOGIN_URL, COOKIE_KEY
 from .instructor.constants import INSTRUCTOR_LOGIN_URL, COOKIE_KEY as INSTRUCTOR_COOKIE_KEY
@@ -25,7 +25,7 @@ app = FastAPI()
 @app.exception_handler(StarletteHTTPException)
 async def custom_404_handler(request: Request, exc: StarletteHTTPException):
     if exc.status_code == 404:
-        return RedirectResponse(url=STUDENT_LOGIN_URL, status_code=303)
+        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
     raise exc
 
 
@@ -41,7 +41,7 @@ async def auth_exception_handler(request: Request, exc: HTTPException):
         response.delete_cookie(key=COOKIE_KEY)
         return response
     if exc.status_code == 404:
-        return RedirectResponse(url=STUDENT_LOGIN_URL, status_code=303)
+        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Bulldog Simple Grader">
+    <title>Bulldog Simple Grader - Page Not Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/titlebar-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/404-style.css') }}">
+</head>
+<body>
+    <div class="titlebar">
+        <div class="nav-left">
+            <a href="/" class="logo">
+                <h1 class="logo">Bulldog Simple Grader</h1>
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="https://github.com/Franktorio/bulldog-simple-grader" target="_blank" rel="noopener noreferrer">Github</a>
+            <a href="{{ url_for('student_login') }}">Student Login</a>
+            <a href="{{ url_for('instructor_login') }}">Instructor Login</a>
+        </div>
+    </div>
+    <div class="content">
+        <div class="not-found-container">
+            <div class="not-found-code">404</div>
+            <h2 class="not-found-title">Page Not Found</h2>
+            <p class="not-found-message">The page you're looking for doesn't exist.</p>
+            <div class="not-found-actions">
+                <a href="{{ url_for('student_login') }}" class="action-button">Student Login</a>
+                <a href="{{ url_for('instructor_login') }}" class="action-button">Instructor Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2026 Bulldog Simple Grader. All rights reserved.</p>
+    </div>
+</body>
+</html>
