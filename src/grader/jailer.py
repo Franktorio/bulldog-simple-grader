@@ -36,7 +36,7 @@ class Jailer:
         path = os.path.join(JAILER_BASE_PATH, f"{self.student_id}_{self.assignment}")
         if os.path.exists(path):
             shutil.rmtree(path)
-        os.mkdir(path)
+        os.makedirs(path)
         self.temp_dir = os.path.abspath(path)
         print(f"[INFO] [{PRINT_PREFIX}] Created jail at {self.temp_dir}")
         return self.temp_dir
