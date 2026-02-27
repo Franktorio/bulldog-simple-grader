@@ -3,7 +3,7 @@
 
 import datetime
 from fastapi import APIRouter, HTTPException, Cookie, Request, Form, Depends, UploadFile
-from src.db.grader_db import Instructor, add_assignment, add_student, get_assignment, modify_assignment, add_login_token, delete_login_token
+from src.db.grader_db import Instructor, add_assignment, add_student, get_assignment, modify_assignment, add_login_token, delete_login_token, add_slug
 from src.db.grader_db import helpers
 from fastapi.responses import RedirectResponse
 from src.frontend.api.paths import templates
@@ -223,7 +223,7 @@ def instructor_add_assignment_post(
         except Exception:
             due_date_timestamp = None
     active = (is_active == "on")
-
+    
     try:
         assignment_id = add_assignment(
             title=title,
@@ -234,6 +234,12 @@ def instructor_add_assignment_post(
             is_active=active
         )
         print(f"[INFO] [{PRINT_PREFIX}] Instructor {instructor.id} created assignment '{title}' with ID {assignment_id}.")
+        for slug in slug_list:
+            try:
+                add_slug(name=slug, assignment_id=assignment_id)
+                print(f"[INFO] [{PRINT_PREFIX}] Added slug '{slug}' to assignment ID {assignment_id}.")
+            except Exception as e:
+                print(f"[ERROR] [{PRINT_PREFIX}] Failed to add slug '{slug}' to assignment ID {assignment_id}: {e}")
         return RedirectResponse(url=INSTRUCTOR_SEE_ASSIGNMENT_URL.format(assignment_id=assignment_id), status_code=303)
     except Exception as e:
         print(f"[ERROR] [{PRINT_PREFIX}] Failed to create assignment: {e}")
