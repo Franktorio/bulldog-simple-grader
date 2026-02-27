@@ -40,7 +40,7 @@ __all__ = [
     'delete_student',
     'set_password',
     'verify_password',
-    'change_password',
+    'change_student_password',
     
     # Assignments
     'Assignment',
@@ -102,5 +102,6 @@ __all__ = [
     'get_instructor',
     'get_all_instructors',
     'modify_instructor',
-    'delete_instructor'
+    'delete_instructor',
+    'change_instructor_password'
 ]
