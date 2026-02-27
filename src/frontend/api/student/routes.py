@@ -3,10 +3,8 @@
 
 from fastapi import APIRouter, HTTPException, Cookie, Request, Form, Depends, UploadFile
 from fastapi.responses import RedirectResponse
-from src.db import grader_db
-from src.db.grader_db.slug_completions import SlugCompletion
-from src.db.grader_db.slugs import Slug
-from src.db.grader_db import login_tokens, Student, helpers, Assignment
+from src.db.grader_db import Student, Assignment, Slug, SlugCompletion, add_login_token, get_slug_completions_by_student_and_assignment
+from src.db.grader_db import helpers
 from src.checks.orchestrator import orchestrate_checks
 from src.frontend.api.paths import templates
 from src.utils import format_datetime
@@ -136,7 +134,7 @@ def student_submit_problem(request: Request, assignment_id: int, slug_name: str,
     """Handle submission of a problem by a student."""
 
     submissions = helpers.get_submissions_for_student_slug(student.id, slug_name)
-    completions = grader_db.slug_completions.get_slug_completions_by_student_and_assignment(student.id, assignment_id)
+    completions = get_slug_completions_by_student_and_assignment(student.id, assignment_id)
 
     completion_status = any(c.slug == slug_name for c in completions)
 
@@ -187,7 +185,7 @@ def student_login_post(request: Request, student_id: str = Form(...), student_pa
     try:
         print(f"[INFO] [{PRINT_PREFIX}] Received login attempt for student ID: {student_id}")
         student = authenticate_student(student_id=student_id, student_password=student_password)
-        new_token = login_tokens.add_login_token(student.id)
+        new_token = add_login_token(student.id)
         response = RedirectResponse(url=STUDENT_HOME_URL, status_code=303)
         response.set_cookie(key=COOKIE_KEY, value=new_token, httponly=True, max_age=COOKIE_MAX_AGE)
         print(f"[INFO] [{PRINT_PREFIX}] Login successful for student ID: {student_id}. Redirecting to home page.")

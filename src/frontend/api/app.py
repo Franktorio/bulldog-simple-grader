@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from config.config import API_ENABLED, API_PORT
-from src.db.grader_db import login_tokens
+from src.db.grader_db import delete_login_token
 from .paths import STATIC_DIR, templates
 from .student import router as student_router
 from .student.constants import STUDENT_LOGIN_URL, COOKIE_KEY
@@ -68,7 +68,7 @@ def start_api_server():
 def student_logout_post(token: str = Cookie(None)):
     """Handle student logout."""
     if token:
-        success = login_tokens.delete_login_token(token)
+        success = delete_login_token(token)
         if success:
             print(f"[INFO] [{PRINT_PREFIX}] Successfully logged out student with token: {token[-5:]}")
         else:

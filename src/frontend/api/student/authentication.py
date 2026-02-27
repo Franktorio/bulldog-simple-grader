@@ -2,7 +2,7 @@
 # Authentication utilities for student API
 
 from fastapi import HTTPException
-from src.db.grader_db import login_tokens, get_student, Student
+from src.db.grader_db import get_login_token, get_student, Student
 from .constants import AUTH_FAILED_MESSAGE, PRINT_PREFIX
 
 
@@ -21,7 +21,7 @@ def authenticate_student(student_id: int = None, student_password: str = None, s
         HTTPException: If authentication fails
     """
     if student_login_token:
-        token = login_tokens.get_login_token(student_login_token)
+        token = get_login_token(student_login_token)
         if not token:
             print(f"[WARNING] [{PRINT_PREFIX}] Invalid login token provided for student ID {student_id}")
             raise HTTPException(status_code=401, detail=AUTH_FAILED_MESSAGE)

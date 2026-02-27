@@ -3,8 +3,8 @@
 
 import datetime
 from fastapi import APIRouter, HTTPException, Cookie, Request, Form, Depends, UploadFile
-from src.db.grader_db import login_tokens, instructors, helpers, add_assignment, add_student, get_assignment, modify_assignment
-from src.db.grader_db.login_tokens import delete_login_token
+from src.db.grader_db import Instructor, add_assignment, add_student, get_assignment, modify_assignment, add_login_token, delete_login_token
+from src.db.grader_db import helpers
 from fastapi.responses import RedirectResponse
 from src.frontend.api.paths import templates
 from .authentication import authenticate_instructor
@@ -33,7 +33,7 @@ from .constants import (
 router = APIRouter(prefix="/instructors", tags=["instructors"])
 
 
-def get_authenticated_instructor(instructor_login_token: str = Cookie(None)) -> instructors.Instructor:
+def get_authenticated_instructor(instructor_login_token: str = Cookie(None)) -> Instructor:
     """Dependency to get authenticated instructor from cookie token.
 
     Raises:
@@ -70,7 +70,7 @@ def instructor_login(request: Request, instructor_login_token: str = Cookie(None
     return templates.TemplateResponse(INSTRUCTOR_LOGIN_TEMPLATE, {"request": request, "user_data": user_data})
 
 @router.get("/home", name="instructor_home")
-def instructor_home(request: Request, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_home(request: Request, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display the instructor home page."""
     user_data = {
         "authenticated": True,
@@ -95,7 +95,7 @@ def instructor_login_post(request: Request, instructor_id: str = Form(...), inst
     try:
         print(f"[INFO] [{PRINT_PREFIX}] Received login attempt for instructor ID: {instructor_id}")
         instructor = authenticate_instructor(instructor_id=instructor_id, instructor_password=instructor_password)
-        new_token = login_tokens.add_login_token(instructor_id=instructor.id)
+        new_token = add_login_token(instructor_id=instructor.id)
         response = RedirectResponse(url=INSTRUCTOR_HOME_URL, status_code=303)
         response.set_cookie(key=COOKIE_KEY, value=new_token, httponly=True, max_age=COOKIE_MAX_AGE)
         print(f"[INFO] [{PRINT_PREFIX}] Login successful for instructor ID: {instructor_id}. Redirecting to home page.")
@@ -132,7 +132,7 @@ def instructor_logout_post(instructor_login_token: str = Cookie(None)):
 # === ASSIGNMENT ROUTES ===
 
 @router.get("/assignments/{assignment_id}", name="instructor_see_assignment")
-def instructor_see_assignment(request: Request, assignment_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_see_assignment(request: Request, assignment_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display detail page for a specific assignment."""
     data = helpers.get_instructor_assignment_page_data(assignment_id)
     if not data:
@@ -148,7 +148,7 @@ def instructor_see_assignment(request: Request, assignment_id: int, instructor: 
 
 
 @router.post("/assignments/{assignment_id}/toggle-active", name="instructor_toggle_assignment_active")
-def instructor_toggle_assignment_active(request: Request, assignment_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_toggle_assignment_active(request: Request, assignment_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Toggle the is_active status of a specific assignment."""
     assignment = get_assignment(assignment_id)
     if not assignment:
@@ -160,7 +160,7 @@ def instructor_toggle_assignment_active(request: Request, assignment_id: int, in
 
 
 @router.get("/assignments/{assignment_id}/submissions", name="instructor_see_submissions")
-def instructor_see_submissions(request: Request, assignment_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_see_submissions(request: Request, assignment_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display all submissions for a specific assignment."""
     data = helpers.get_instructor_assignment_submissions(assignment_id)
     if not data:
@@ -176,7 +176,7 @@ def instructor_see_submissions(request: Request, assignment_id: int, instructor:
 
 
 @router.get("/assignments/{assignment_id}/completions", name="instructor_see_completions")
-def instructor_see_completions(request: Request, assignment_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_see_completions(request: Request, assignment_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display all completions for a specific assignment."""
     data = helpers.get_instructor_assignment_completions(assignment_id)
     if not data:
@@ -192,7 +192,7 @@ def instructor_see_completions(request: Request, assignment_id: int, instructor:
 
 
 @router.get("/add-assignment", name="instructor_add_assignment")
-def instructor_add_assignment(request: Request, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_add_assignment(request: Request, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display the add assignment form."""
     user_data = {
         "authenticated": True,
@@ -211,7 +211,7 @@ def instructor_add_assignment_post(
     min_completed: int = Form(...),
     due_date: str = Form(""),
     is_active: str = Form("off"),
-    instructor: instructors.Instructor = Depends(get_authenticated_instructor)
+    instructor: Instructor = Depends(get_authenticated_instructor)
 ):
     """Handle the add assignment form submission."""
     slug_list = [s.strip() for s in slugs.split(",") if s.strip()]
@@ -250,7 +250,7 @@ def instructor_add_assignment_post(
 # === STUDENT ROUTES ===
 
 @router.get("/students/{student_id}", name="instructor_see_student")
-def instructor_see_student(request: Request, student_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_see_student(request: Request, student_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display detail page for a specific student."""
     data = helpers.get_instructor_student_page_data(student_id)
     if not data:
@@ -266,7 +266,7 @@ def instructor_see_student(request: Request, student_id: int, instructor: instru
 
 
 @router.get("/students/{student_id}/submissions", name="instructor_see_student_submissions")
-def instructor_see_student_submissions(request: Request, student_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_see_student_submissions(request: Request, student_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display all submissions by a specific student."""
     data = helpers.get_instructor_student_submissions(student_id)
     if not data:
@@ -282,7 +282,7 @@ def instructor_see_student_submissions(request: Request, student_id: int, instru
 
 
 @router.get("/students/{student_id}/assignments/{assignment_id}/submissions", name="instructor_see_student_assignment_submissions")
-def instructor_see_student_assignment_submissions(request: Request, student_id: int, assignment_id: int, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_see_student_assignment_submissions(request: Request, student_id: int, assignment_id: int, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display submissions by a specific student for a specific assignment."""
     data = helpers.get_instructor_student_assignment_submissions(student_id, assignment_id)
     if not data:
@@ -298,7 +298,7 @@ def instructor_see_student_assignment_submissions(request: Request, student_id: 
 
 
 @router.get("/add-student", name="instructor_add_student")
-def instructor_add_student(request: Request, instructor: instructors.Instructor = Depends(get_authenticated_instructor)):
+def instructor_add_student(request: Request, instructor: Instructor = Depends(get_authenticated_instructor)):
     """Display the add student form."""
     user_data = {
         "authenticated": True,
@@ -314,7 +314,7 @@ def instructor_add_student_post(
     student_id: int = Form(...),
     student_name: str = Form(...),
     password: str = Form(...),
-    instructor: instructors.Instructor = Depends(get_authenticated_instructor)
+    instructor: Instructor = Depends(get_authenticated_instructor)
 ):
     """Handle the add student form submission."""
     try:
