@@ -41,7 +41,7 @@
                 <p>Submitted at: {{ submission.submission_timestamp }}</p>
                 <div class="submission-result">
                     <h4>Grader Output:</h4>
-                    {% if submission.grader_output is mapping %}
+                    {% if submission.grader_output is mapping and submission.grader_output.tests is defined %}
                         <ul>
                             <li><strong>Assignment:</strong> {{ submission.grader_output.assignment }}</li>
                             <li><strong>Passed:</strong> {{ submission.grader_output.passed }} / {{ submission.grader_output.total }}</li>

@@ -296,15 +296,28 @@ async def orchestrate_checks(student_id: int, assignment_id: int, slug: str, sub
     if not submission:
         print(f"[ERROR] [{PRINT_PREFIX}] Failed to create submission record.")
         return False
-    
-    
-    grader = await setup_grader(student_id, assignment.title+"_"+slug, submitted_files, now, timeout)
-    print(f"[INFO] [{PRINT_PREFIX}] Grader setup complete.")
-    
+
+    def _error_output(message: str) -> dict:
+        return {
+            "assignment": assignment.title,
+            "assignment_id": assignment.id,
+            "student_id": student_id,
+            "slug": slug,
+            "tests": {},
+            "passed": 0,
+            "total": 0,
+            "all_passed": False,
+            "program_output": message
+        }
+
+    grader = None
     try:
+        grader = await setup_grader(student_id, assignment.title+"_"+slug, submitted_files, now, timeout)
+        print(f"[INFO] [{PRINT_PREFIX}] Grader setup complete.")
         evaluation_module = load_evaluation_module(assignment, slug)
         if not evaluation_module:
             print(f"[ERROR] [{PRINT_PREFIX}] Could not load evaluation module.")
+            submission.change_grader_output(_error_output("Could not load evaluation module."))
             grader.cleanup()
             return False
         evaluation_module.set_grader(grader)
@@ -321,9 +334,13 @@ async def orchestrate_checks(student_id: int, assignment_id: int, slug: str, sub
         return True
     except ImportError as e:
         print(f"[ERROR] [{PRINT_PREFIX}] Failed to import evaluation module for '{assignment.directory_name}': {e}")
-        grader.cleanup()
+        submission.change_grader_output(_error_output(f"Failed to import evaluation module: {e}"))
+        if grader:
+            grader.cleanup()
         return False
     except Exception as e:
         print(f"[ERROR] [{PRINT_PREFIX}] Unexpected error during check orchestration: {e}")
-        grader.cleanup()
+        submission.change_grader_output(_error_output(f"Unexpected error during grading: {e}"))
+        if grader:
+            grader.cleanup()
         return False
