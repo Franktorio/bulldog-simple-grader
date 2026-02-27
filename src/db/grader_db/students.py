@@ -188,9 +188,9 @@ def verify_password(student_id: int, password: str) -> bool:
         print(f"[WARNING] [{PRINT_PREFIX}] Invalid password for student ID {student_id}")
     return is_valid
 
-def change_password(student_id: int, old_password: str, new_password: str) -> bool:
+def change_password(student_id: int, old_password: str | None, new_password: str, from_script: bool = False) -> bool:
     """Change a student's password after verifying the old password."""
-    if not verify_password(student_id, old_password):
+    if not verify_password(student_id, old_password) and not from_script:
         print(f"[ERROR] [{PRINT_PREFIX}] Cannot change password - old password incorrect for student ID {student_id}")
         return False
     
