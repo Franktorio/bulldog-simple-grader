@@ -9,7 +9,7 @@ from src.grader.jailer import Jailer
 from src.utils import in_executor
 
 PRINT_PREFIX = "GRADER"
-TIMEOUT = "TIMEOUT"
+TIMEOUT: str = "TIMEOUT"
 
 class Grader:
     def __init__(self, student_id: str, assignment: str, random_seed: int = 42, timeout: int = 10):

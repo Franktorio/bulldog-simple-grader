@@ -10,7 +10,7 @@ Every evaluation module at `evaluations/{assignment_dir}/{slug_name}/__init__.py
 ```python
 from src.checks import check
 from src.checks.raised import RaisedError
-from src.grader.grader import Grader
+from src.grader.grader import Grader, TIMEOUT
 
 grader = None
 
@@ -28,7 +28,16 @@ async def my_test_one():
 async def my_test_two():
     return True
 
-ALL_TESTS = [my_test_one, my_test_two]  # Required: list of all test functions
+@check
+async def run_code_check():
+    await grader.execute_in_jail(["python", "solution.py"])
+    code = await grader.wait_for_completion(timeout=3)
+    if code == TIMEOUT:
+        raise RaisedError("Timeout", hint="Check for infinite loops")
+    if code != 0:
+        raise RaisedError("Runtime error", traceback=code)
+    return True
+ALL_TESTS = [my_test_one, my_test_two, run_code_check]  # Required: list of all test functions
 ```
 
 ## Writing Tests
