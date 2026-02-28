@@ -9,6 +9,7 @@ from src.grader.jailer import Jailer
 from src.utils import in_executor
 
 PRINT_PREFIX = "GRADER"
+TIMEOUT = "TIMEOUT"
 
 class Grader:
     def __init__(self, student_id: str, assignment: str, random_seed: int = 42, timeout: int = 10):
@@ -90,11 +91,23 @@ class Grader:
         return self.jailer.is_process_running()
     
     @in_executor
-    def wait_for_completion(self, timeout: int | None = None) -> int | None:
-        """Wait for the jailed process to complete and return its exit code."""
+    def wait_for_completion(self, timeout: int | None = None) -> int | str:
+        """Wait for the jailed process to complete.
+
+        Returns:
+            0               -- process exited successfully.
+            TIMEOUT         -- process was killed after exceeding the time limit.
+            str (stderr)    -- process exited with a non-zero code; value is the
+                               captured stderr, or a generic message if stderr is empty.
+        """
         return_code = self.jailer.wait_for_process(timeout=timeout)
         print(f"[INFO] [{PRINT_PREFIX}] Process completed with return code: {return_code}")
-        return return_code
+        if return_code is None:
+            return TIMEOUT
+        if return_code == 0:
+            return 0
+        stderr = self.jailer.stderr_buffer.strip()
+        return stderr or f"Process exited with return code {return_code}"
     
     @in_executor
     def get_exit_code(self) -> int | None:
