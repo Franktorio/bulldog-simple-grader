@@ -1,0 +1,9 @@
+.env
+.log
+.db
+logs/
+data/
+venv/
+__pycache__/
+/evaluations
+/submissions
