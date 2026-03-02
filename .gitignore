@@ -1,3 +1,4 @@
+/.vscode/
 .env
 .log
 .db
@@ -7,3 +8,4 @@ venv/
 __pycache__/
 /evaluations
 /submissions
+.vscode/
