@@ -3,12 +3,12 @@
 
 import os
 import random
-import asyncio
-import time
+import shutil
 from src.grader.jailer import Jailer
 from src.utils import in_executor
 
 PRINT_PREFIX = "GRADER"
+TIMEOUT: str = "TIMEOUT"
 
 class Grader:
     def __init__(self, student_id: str, assignment: str, random_seed: int = 42, timeout: int = 10):
@@ -40,6 +40,36 @@ class Grader:
         if remove_source:
             os.remove(source_path)
         print(f"[INFO] [{PRINT_PREFIX}] Placed file {source_path} into jail at {dest_path}")
+
+    @in_executor
+    def place_directory_in_jail(self, source_path_dir: str, dest_dir_name: str, remove_source: bool = True) -> None:
+        """Place an entire directory into the jail."""
+        dest_dir_name = f"{self.jail_path}/{dest_dir_name}"
+        os.makedirs(dest_dir_name, exist_ok=True)
+
+        to_transfer = {} # dict of str: str mapped to {path on host system : path in jail}
+
+        def _recursive_build_structure(source_dir: str, dest_dir: str):
+            """Helper function to recursively build the directory structure in the jail and populate to_transfer."""
+            for item in os.listdir(source_dir):
+                source_item_path = os.path.join(source_dir, item)
+                dest_item_path = os.path.join(dest_dir, item)
+                if os.path.isdir(source_item_path):
+                    os.makedirs(dest_item_path, exist_ok=True)
+                    _recursive_build_structure(source_item_path, dest_item_path)
+                else:
+                    to_transfer[source_item_path] = dest_item_path
+
+        _recursive_build_structure(source_path_dir, dest_dir_name)
+
+        for source_path, dest_path in to_transfer.items():
+            with open(source_path, "r", errors="ignore") as src_file, open(dest_path, "w", errors="ignore") as dest_file:
+                dest_file.write(src_file.read())
+                print(f"[INFO] [{PRINT_PREFIX}] Placed file: \n{source_path}\n into jail at \n{dest_path}\n")
+        
+        if remove_source:
+            shutil.rmtree(source_path_dir)
+        print(f"[INFO] [{PRINT_PREFIX}] Placed directory {source_path_dir} into jail at {dest_dir_name}")
 
     @in_executor
     def run_check(self, check: callable) -> dict:
@@ -90,11 +120,23 @@ class Grader:
         return self.jailer.is_process_running()
     
     @in_executor
-    def wait_for_completion(self, timeout: int | None = None) -> int | None:
-        """Wait for the jailed process to complete and return its exit code."""
+    def wait_for_completion(self, timeout: int | None = None) -> int | str:
+        """Wait for the jailed process to complete.
+
+        Returns:
+            0               -- process exited successfully.
+            TIMEOUT         -- process was killed after exceeding the time limit.
+            str (stderr)    -- process exited with a non-zero code; value is the
+                               captured stderr, or a generic message if stderr is empty.
+        """
         return_code = self.jailer.wait_for_process(timeout=timeout)
         print(f"[INFO] [{PRINT_PREFIX}] Process completed with return code: {return_code}")
-        return return_code
+        if return_code is None:
+            return TIMEOUT
+        if return_code == 0:
+            return 0
+        stderr = self.jailer.stderr_buffer.strip()
+        return stderr or f"Process exited with return code {return_code}"
     
     @in_executor
     def get_exit_code(self) -> int | None:

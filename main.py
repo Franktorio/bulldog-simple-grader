@@ -14,6 +14,10 @@ from src.db.app_context import create_app_context
 from src.db.grader_db import add_student
 from src.db.grader_db.instructors import add_instructor
 
+import os
+
+os.makedirs("submissions", exist_ok=True) # Ensure submissions directory exists for storing student code files
+
 def main_loop():
     while True:
         user_input = input()

@@ -68,6 +68,7 @@ class Jailer:
             ulimit -f 10240       # File size: 10MB max per file (in KB)
             ulimit -n 256         # Max open files: 256
             ulimit -c 0           # Core dump size: 0 (no core dumps)
+            ulimit -u 64          # Max processes: 64 (fork bomb protection)
             
             cd {self.temp_dir}
             exec env -i \
@@ -109,7 +110,10 @@ class Jailer:
                     # Check if program has terminated
                     terminated = process.poll() is not None # Poll returns None if process is still running
                     if output:
-                        self.stdout_buffer += output
+                        if len(self.stdout_buffer) < 10000:
+                            self.stdout_buffer += output
+                            if len(self.stdout_buffer) > 10000:
+                                self.stdout_buffer = self.stdout_buffer[:10000]
                     if terminated:
                         break
             except Exception as e:
@@ -126,7 +130,10 @@ class Jailer:
                     output = process.stderr.readline()
                     terminated = process.poll() is not None
                     if output:
-                        self.stderr_buffer += output
+                        if len(self.stderr_buffer) < 10000:
+                            self.stderr_buffer += output
+                            if len(self.stderr_buffer) > 10000:
+                                self.stderr_buffer = self.stderr_buffer[:10000]
                     if terminated:
                         break
             except Exception as e:
@@ -273,6 +280,8 @@ class Jailer:
             time.sleep(1)
             try:
                 shutil.rmtree(self.temp_dir)
+                self.nuked = True
+                print(f"[INFO] [{PRINT_PREFIX}] Nuked jail {_jail_name} successfully on second attempt.")
             except Exception as e:
                 print(f"[ERROR] [{PRINT_PREFIX}] Second attempt to nuke jail {_jail_name} also failed: {e}")
                 print(f"[WARNING] [{PRINT_PREFIX}] Jail {_jail_name} may not have been fully nuked. Manual cleanup may be required.")

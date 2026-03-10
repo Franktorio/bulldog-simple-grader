@@ -291,8 +291,10 @@ async def orchestrate_checks(student_id: int, assignment_id: int, slug: str, sub
     # temporary: grab first file and store that
 
     submitted_filename, submitted_code = list(submitted_files.items())[0]
+
+    submitted_code_str = f"Filename: {submitted_filename}\nSTART OF SUBMITTED CODE\n\n" + submitted_code + "\n\nEND OF SUBMITTED CODE"
     
-    submission = create_submission_record(student_id, assignment_id, slug, now, submitted_code=submitted_code)
+    submission = create_submission_record(student_id, assignment_id, slug, now, submitted_code=submitted_code_str)
     if not submission:
         print(f"[ERROR] [{PRINT_PREFIX}] Failed to create submission record.")
         return False
