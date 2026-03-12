@@ -15,6 +15,11 @@ class Grader:
         self.jailer = Jailer(student_id=student_id, assignment=assignment, timeout=timeout)
         self.jail_path = None
         self.random = random.Random(random_seed)
+    
+    def set_seed(self, seed: int) -> None:
+        """Set the random seed for this grader's random instance."""
+        self.random.seed(seed)
+        print(f"[INFO] [{PRINT_PREFIX}] Random seed set to {seed}")
 
     async def create_jail(self) -> str:
         """Create the jail directory for this grader."""
@@ -70,6 +75,14 @@ class Grader:
         if remove_source:
             shutil.rmtree(source_path_dir)
         print(f"[INFO] [{PRINT_PREFIX}] Placed directory {source_path_dir} into jail at {dest_dir_name}")
+        
+    @in_executor
+    def append_to_file(self, content: str, filename: str) -> None:
+        """Append content to a file in the jail."""
+        file_path = f"{self.jail_path}/{filename}"
+        with open(file_path, "a") as file:
+            file.write(content)
+        print(f"[INFO] [{PRINT_PREFIX}] Appended content to {file_path}")
 
     @in_executor
     def run_check(self, check: callable) -> dict:
