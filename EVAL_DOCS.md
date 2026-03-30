@@ -3,6 +3,12 @@
 ## Overview
 Evaluations test student submissions in an isolated jail environment with security limits (10s CPU , 512MB RAM, no network).
 
+## Add an assignment
+1. Create a new directory under `evaluations/` for the assignment (e.g. `evaluations/assignment1/`)
+2. For every assignment question (slug), create a subdirectory (e.g. `evaluations/assignment1/q1/`)
+3. In each slug directory, create an `__init__.py` file that defines the tests for that question (see below for required structure and examples)
+4. On the instructor dashboard (webapp), create a new assignment and add questions with the same slugs as the directories you created. The system will automatically link them to the test functions you defined in the `__init__.py` files.
+
 ## Required Structure
 
 Every evaluation module at `evaluations/{assignment_dir}/{slug_name}/__init__.py` needs:
