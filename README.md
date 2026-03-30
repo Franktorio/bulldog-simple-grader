@@ -51,7 +51,7 @@ The application will automatically set everything up, including the database and
 
 ### Creating Assignments
 
-To create and assignment, read EVAL_DOCS.md
+To create an assignment, read EVAL_DOCS.md
 
 ## Project Structure
 
