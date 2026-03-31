@@ -119,15 +119,15 @@ bulldog-simple-grader/
 └── submissions/                     # Jail root directory; student code files get copied here for execution
 ```
 
-### Notes for maintainers
+## Notes for maintainers
 
-**Adding a new assignment**
+### Adding a new assignment
 
 Each assignment lives in its own folder under `evaluations/`. Inside it, you need an `__init__.py` that defines your test functions and an `ALL_TESTS` list. Read [src/EVAL_DOCS.md](src/EVAL_DOCS.md) for the full walkthrough (it covers the `@check` decorator, how to use the `Grader` API, and some example patterns. Once the folder is ready, register the assignment through the instructor dashboard.
 
 Each assignment is split into *slugs*, where each slug is one thing a student submits (usually one file). Keep them small and focused.
 
-**Adding a new database table**
+### Adding a new database table
 
 Add your `CREATE TABLE IF NOT EXISTS` statement to `src/db/grader_db/schema.py`, then create a new file (e.g. `my_table.py`) in the same folder with a dataclass and the usual CRUD functions. Look at any of the existing modules like `students.py` or `slugs.py` for the pattern to follow. Finally, re-export everything from `src/db/grader_db/__init__.py` so the rest of the app can import it from one place.
 
@@ -135,23 +135,23 @@ Keep raw SQL inside its own module. Don't scatter queries around the codebase. A
 
 After changing the schema, run `automations/scripts/migrate_db.py <database_name>.db` to apply it.
 
-**Adding a new route**
+### Adding a new route
 
 Student and instructor routes live in separate folders and should stay that way. Add student routes to `src/frontend/api/student/routes.py` and instructor routes to `src/frontend/api/instructor/routes.py`. Put any new URL strings in the corresponding `constants.py` before referencing them anywhere. Every route that requires a logged-in user must use the `get_authenticated_student` or `get_authenticated_instructor` dependency.
 
-**Configuration**
+### Configuration
 
 All settings go in `.env` and get read through `config/config.py`. Don't hardcode ports, paths, or timeouts anywhere else. If you need a new setting, add a typed getter to `config.py` following the existing helpers.
 
-**Logging**
+### Logging
 
 Just use `print()`. It's already wired up to write timestamped entries to the log file. Follow the format the rest of the codebase uses: `[LEVEL] [MODULE_PREFIX] message`, for example `[INFO] [GRADER] Jail created`. Don't introduce a separate logging library.
 
-**Sandbox safety**
+### Sandbox safety
 
 Student code must always run through `Grader.execute_in_jail()`. Never execute anything from a student submission directly on the host.
 
-**Automation scripts**
+### Automation scripts
 
 Run the scripts in `automations/scripts/` as modules, not files directly:
 
