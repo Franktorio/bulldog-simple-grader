@@ -123,7 +123,7 @@ bulldog-simple-grader/
 
 ### Adding a new assignment
 
-Each assignment lives in its own folder under `evaluations/`. Inside it, you need an `__init__.py` that defines your test functions and an `ALL_TESTS` list. Read [src/EVAL_DOCS.md](src/EVAL_DOCS.md) for the full walkthrough (it covers the `@check` decorator, how to use the `Grader` API, and some example patterns. Once the folder is ready, register the assignment through the instructor dashboard.
+Each assignment lives in its own folder under `evaluations/`. Inside it, you need an `__init__.py` that defines your test functions and an `ALL_TESTS` list. Read [EVAL_DOCS.md](EVAL_DOCS.md) for the full walkthrough (it covers the `@check` decorator, how to use the `Grader` API, and some example patterns. Once the folder is ready, register the assignment through the instructor dashboard.
 
 Each assignment is split into *slugs*, where each slug is one thing a student submits (usually one file). Keep them small and focused.
 
