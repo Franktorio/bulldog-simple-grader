@@ -69,6 +69,12 @@
     color: var(--accent);
 }
 
+.student-id {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-left: 0.5rem;
+}
+
 .assignment-card {
     background: var(--background);
     border: 1px solid var(--border);

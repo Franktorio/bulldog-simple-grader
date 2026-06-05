@@ -20,11 +20,11 @@
 <div class="dashboard-flex">
     <section class="student-list">
         {% if user_data.students %}
-            <h2>Students</h2>
+            <h2>Students ({{ user_data.students|length }})</h2>
             <div>
             {% for student in user_data.students %}
                 <a href="/instructors/students/{{ student.id }}" class="student-card">
-                    {{ student.name }}
+                    {{ student.name }} <span class="student-id">(ID: {{ student.id }})</span>
                 </a>
             {% endfor %}
             </div>
@@ -35,7 +35,7 @@
 
     <section class="assignment-list">
         {% if user_data.assignments %}
-            <h2>Assignments</h2>
+            <h2>Assignments ({{ user_data.assignments|length }})</h2>
             {% for assignment in user_data.assignments %}
                 <a href="/instructors/assignments/{{ assignment.id }}" class="assignment-card">
                     <div class="assignment-title">{{ assignment.title }}</div>
