@@ -44,7 +44,11 @@ async def auth_exception_handler(request: Request, exc: HTTPException):
         response.delete_cookie(key=COOKIE_KEY)
         return response
     if exc.status_code == 404:
-        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+        return templates.TemplateResponse(
+            name="404.html",
+            context={"request": request},
+            status_code=404
+        )
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}

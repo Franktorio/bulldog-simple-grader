@@ -67,7 +67,7 @@ def instructor_login(request: Request, instructor_login_token: str = Cookie(None
     user_data = {
         "authenticated": False
     }
-    return templates.TemplateResponse(INSTRUCTOR_LOGIN_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_LOGIN_TEMPLATE, context={"request": request, "user_data": user_data})
 
 @router.get("/home", name="instructor_home")
 def instructor_home(request: Request, instructor: Instructor = Depends(get_authenticated_instructor)):
@@ -78,7 +78,7 @@ def instructor_home(request: Request, instructor: Instructor = Depends(get_authe
         "name": instructor.name,
         **helpers.get_instructor_homepage_data()
     }
-    return templates.TemplateResponse(INSTRUCTOR_HOME_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_HOME_TEMPLATE, context={"request": request, "user_data": user_data})
 
 @router.post("/login", name="instructor_login_post")
 def instructor_login_post(request: Request, instructor_id: str = Form(...), instructor_password: str = Form(...), instructor_login_token: str = Cookie(None)):
@@ -103,8 +103,8 @@ def instructor_login_post(request: Request, instructor_id: str = Form(...), inst
     except HTTPException:
         print(f"[INFO] [{PRINT_PREFIX}] Authentication failed for instructor ID: {instructor_id}. Returning to login page.")
         return templates.TemplateResponse(
-            INSTRUCTOR_LOGIN_TEMPLATE,
-            {
+            name=INSTRUCTOR_LOGIN_TEMPLATE,
+            context={
                 "request": request,
                 "error": AUTH_FAILED_MESSAGE,
                 "user_data": {"authenticated": False}
@@ -144,7 +144,7 @@ def instructor_see_assignment(request: Request, assignment_id: int, instructor: 
         "name": instructor.name,
         **data
     }
-    return templates.TemplateResponse(INSTRUCTOR_SEE_ASSIGNMENT_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_SEE_ASSIGNMENT_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.post("/assignments/{assignment_id}/toggle-active", name="instructor_toggle_assignment_active")
@@ -172,7 +172,7 @@ def instructor_see_submissions(request: Request, assignment_id: int, instructor:
         "name": instructor.name,
         **data
     }
-    return templates.TemplateResponse(INSTRUCTOR_SEE_SUBMISSIONS_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_SEE_SUBMISSIONS_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.get("/assignments/{assignment_id}/completions", name="instructor_see_completions")
@@ -188,7 +188,7 @@ def instructor_see_completions(request: Request, assignment_id: int, instructor:
         "name": instructor.name,
         **data
     }
-    return templates.TemplateResponse(INSTRUCTOR_SEE_COMPLETIONS_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_SEE_COMPLETIONS_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.get("/add-assignment", name="instructor_add_assignment")
@@ -199,7 +199,7 @@ def instructor_add_assignment(request: Request, instructor: Instructor = Depends
         "id": instructor.id,
         "name": instructor.name,
     }
-    return templates.TemplateResponse(INSTRUCTOR_ADD_ASSIGNMENT_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_ADD_ASSIGNMENT_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.post("/add-assignment", name="instructor_add_assignment_post")
@@ -244,8 +244,8 @@ def instructor_add_assignment_post(
     except Exception as e:
         print(f"[ERROR] [{PRINT_PREFIX}] Failed to create assignment: {e}")
         return templates.TemplateResponse(
-            INSTRUCTOR_ADD_ASSIGNMENT_TEMPLATE,
-            {
+            name=INSTRUCTOR_ADD_ASSIGNMENT_TEMPLATE,
+            context={
                 "request": request,
                 "error": "Failed to create assignment. Please check your inputs.",
                 "user_data": {"authenticated": True, "id": instructor.id, "name": instructor.name}
@@ -268,7 +268,7 @@ def instructor_see_student(request: Request, student_id: int, instructor: Instru
         "name": instructor.name,
         **data
     }
-    return templates.TemplateResponse(INSTRUCTOR_SEE_STUDENT_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_SEE_STUDENT_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.get("/students/{student_id}/submissions", name="instructor_see_student_submissions")
@@ -284,7 +284,7 @@ def instructor_see_student_submissions(request: Request, student_id: int, instru
         "name": instructor.name,
         **data
     }
-    return templates.TemplateResponse(INSTRUCTOR_SEE_STUDENT_SUBMISSIONS_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_SEE_STUDENT_SUBMISSIONS_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.get("/students/{student_id}/assignments/{assignment_id}/submissions", name="instructor_see_student_assignment_submissions")
@@ -300,7 +300,7 @@ def instructor_see_student_assignment_submissions(request: Request, student_id: 
         "name": instructor.name,
         **data
     }
-    return templates.TemplateResponse(INSTRUCTOR_SEE_STUDENT_ASSIGNMENT_SUBMISSIONS_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_SEE_STUDENT_ASSIGNMENT_SUBMISSIONS_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.get("/add-student", name="instructor_add_student")
@@ -311,7 +311,7 @@ def instructor_add_student(request: Request, instructor: Instructor = Depends(ge
         "id": instructor.id,
         "name": instructor.name,
     }
-    return templates.TemplateResponse(INSTRUCTOR_ADD_STUDENT_TEMPLATE, {"request": request, "user_data": user_data})
+    return templates.TemplateResponse(name=INSTRUCTOR_ADD_STUDENT_TEMPLATE, context={"request": request, "user_data": user_data})
 
 
 @router.post("/add-student", name="instructor_add_student_post")
@@ -330,8 +330,8 @@ def instructor_add_student_post(
     except Exception as e:
         print(f"[ERROR] [{PRINT_PREFIX}] Failed to add student: {e}")
         return templates.TemplateResponse(
-            INSTRUCTOR_ADD_STUDENT_TEMPLATE,
-            {
+            name=INSTRUCTOR_ADD_STUDENT_TEMPLATE,
+            context={
                 "request": request,
                 "error": "Failed to add student. The student ID may already be taken.",
                 "user_data": {"authenticated": True, "id": instructor.id, "name": instructor.name}
