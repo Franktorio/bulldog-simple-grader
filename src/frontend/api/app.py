@@ -25,9 +25,12 @@ app = FastAPI()
 @app.exception_handler(StarletteHTTPException)
 async def custom_404_handler(request: Request, exc: StarletteHTTPException):
     if exc.status_code == 404:
-        return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+        return templates.TemplateResponse(
+            request=request,
+            name="404.html",
+            status_code=404
+        )
     raise exc
-
 
 @app.exception_handler(HTTPException)
 async def auth_exception_handler(request: Request, exc: HTTPException):
