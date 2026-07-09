@@ -61,9 +61,9 @@ def student_login(request: Request, student_login_token: str = Cookie(None)):
     user_data = {
         "authenticated": False
     }
-    return templates.TemplateResponse(name=STUDENT_LOGIN_TEMPLATE, context={"request": request, "user_data": user_data})
+    return templates.TemplateResponse(request=request, name=STUDENT_LOGIN_TEMPLATE, context={"user_data": user_data})
 
-@router.get("/home", name="student_home")
+@router.get("/home", name="student_home")   
 def student_home(request: Request, student: Student = Depends(get_authenticated_student)):
     """Display the student home page with assignments."""
     def _dict_assignment(assignment: Assignment) -> dict:
@@ -91,7 +91,7 @@ def student_home(request: Request, student: Student = Depends(get_authenticated_
         "assignments": assignment_data,
     }
     print(f"[INFO] [{PRINT_PREFIX}] Rendering home page for student ID {student.id} with {len(assignment_data)} assignments.")
-    return templates.TemplateResponse(name=STUDENT_HOME_TEMPLATE, context={"request": request, "user_data": user_data})
+    return templates.TemplateResponse(request=request, name=STUDENT_HOME_TEMPLATE, context={"user_data": user_data})
 
 @router.get("/assignments/{assignment_id}", name="student_assignment_detail")
 def student_assignment_detail(request: Request, assignment_id: int, student: Student = Depends(get_authenticated_student)):
@@ -127,7 +127,7 @@ def student_assignment_detail(request: Request, assignment_id: int, student: Stu
         "slugs_completed": [_dict_slug(s)["name"] for s in assignment_detail["slugs_completed"]]
     }
     print(f"[INFO] [{PRINT_PREFIX}] Rendering assignment detail page for student ID {student.id} and assignment ID {assignment_id}.")
-    return templates.TemplateResponse(name=STUDENT_ASSIGNMENT_TEMPLATE, context={"request": request, "user_data": data})
+    return templates.TemplateResponse(request=request, name=STUDENT_ASSIGNMENT_TEMPLATE, context={"user_data": data})
 
 @router.get("/assignments/{assignment_id}/{slug_name}", name="student_submit_problem")
 def student_submit_problem(request: Request, assignment_id: int, slug_name: str, student: Student = Depends(get_authenticated_student)):
@@ -140,7 +140,8 @@ def student_submit_problem(request: Request, assignment_id: int, slug_name: str,
 
     submissions.reverse()
 
-    return templates.TemplateResponse(name=STUDENT_SUBMIT_TEMPLATE, context={"request": request, "user_data": {
+    return templates.TemplateResponse(
+        request=request, name=STUDENT_SUBMIT_TEMPLATE, context={"user_data": {
         "authenticated": True,
         "assignment_id": assignment_id,
         "slug_name": slug_name,
@@ -192,8 +193,8 @@ def student_login_post(request: Request, student_id: str = Form(...), student_pa
         return response
     except HTTPException:
         print(f"[INFO] [{PRINT_PREFIX}] Authentication failed for student ID: {student_id}. Returning to login page.")
-        return templates.TemplateResponse(name=STUDENT_LOGIN_TEMPLATE, context={
-            "request": request, 
+        return templates.TemplateResponse(
+            request=request, name=STUDENT_LOGIN_TEMPLATE, context={
             "error": AUTH_FAILED_MESSAGE,
             "user_data": {"authenticated": False}
             })
