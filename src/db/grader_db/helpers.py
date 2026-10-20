@@ -75,7 +75,7 @@ def get_submissions_for_student_slug(student_id: int, slug_name: str) -> list[di
     if not slug_submissions:
         return []
     
-    return [_dict_submission(s) for s in slug_submissions[:10]]  # Limit to last 10 submissions for this slug
+    return [_dict_submission(s) for s in slug_submissions[-10:]]  # Limit to last 10 submissions for this slug
 
 
 # === INSTRUCTOR HELPERS ===
