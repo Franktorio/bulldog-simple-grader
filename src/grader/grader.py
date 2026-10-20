@@ -36,7 +36,7 @@ class Grader:
         print(f"[INFO] [{PRINT_PREFIX}] Code submitted to {code_file_path}")
 
     @in_executor
-    def place_file_in_jail(self, source_path: str, dest_filename: str, remove_source: bool = True) -> None:
+    def place_file_in_jail(self, source_path: str, dest_filename: str, remove_source: bool = False) -> None:
         """Place an external file into the jail."""
         dest_path = f"{self.jail_path}/{dest_filename}"
         with open(source_path, "r") as src_file:
