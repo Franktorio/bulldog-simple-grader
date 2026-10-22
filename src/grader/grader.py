@@ -1,9 +1,11 @@
 # src/grader/grader.py
 # Orchestrates the grading process using the Jailer to safely execute code.
 
+import asyncio
 import os
 import random
 import shutil
+from typing import Literal
 from src.grader.jailer import Jailer
 from src.utils import in_executor
 
@@ -113,6 +115,41 @@ class Grader:
         self.jailer.stdin_to_jail(input_str)
         print(f"[INFO] [{PRINT_PREFIX}] Sent input to jailed process.")
     
+    async def input_and_wait_for_output(self, input_str: str, expected_output: str | Literal[False], timeout: float = 5) -> str:
+        """Send input and poll newly captured stdout every 10 ms.
+
+        Args:
+            input_str: Text to send to stdin; include a newline if needed.
+            expected_output: Case-sensitive substring to wait for, or False to
+                wait for any new text. An empty string matches immediately.
+            timeout: Seconds to wait after sending input. Defaults to 5 and does
+                not reset the overall execution timeout.
+
+        Returns:
+            All captured stdout after the index saved before sending input,
+            once the expected substring appears or any text arrives in False
+            mode. The returned text may be only part of the full response.
+
+        Raises:
+            TimeoutError: No matching output arrived within timeout seconds.
+                This method does not kill the process.
+
+        Do not clear buffers during a wait. The reader captures output after a
+        newline or EOF and retains only the first 10,000 stdout characters.
+        """
+        last_read_position = len(self.jailer.stdout_buffer)
+        await self.send_input(input_str)
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + timeout
+        while True:
+            output = self.jailer.stdout_buffer[last_read_position:]
+            if (bool(output) if expected_output is False else expected_output in output):
+                return output
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                raise TimeoutError(f"Expected output not received within {timeout} seconds")
+            await asyncio.sleep(min(0.01, remaining))
+
     @in_executor
     def get_output(self, lines: int | None = 0, return_as='str') -> str | list:
         """Get output from the jailed process."""
